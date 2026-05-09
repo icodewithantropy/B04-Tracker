@@ -4,284 +4,664 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JMI B04 Prep Tracker 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-  .tab { overflow: hidden; background: #333; border-radius: 10px 10px 0 0; }
-  .tab button { background: #333; color: white; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
-  .tab button:hover { background: #555; }
-  .tab button.active { background: #4CAF50; }
-  .tabcontent { display: none; background: white; padding: 20px; border: 1px solid #ccc; border-top: none; border-radius: 0 0 10px 10px; }
-  table { border-collapse: collapse; width: 100%; margin-top: 15px; }
-  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-  th { background-color: #4CAF50; color: white; }
-  input[type="text"], input[type="number"], select { padding: 6px; width: 90%; box-sizing: border-box; }
-  .btn { background: #4CAF50; color: white; padding: 8px 16px; border: none; cursor: pointer; margin-top: 10px; border-radius: 5px; }
-  .btn:hover { background: #45a049; }
-  .danger { background: #f44336; }
-  .danger:hover { background: #d32f2f; }
-  .progress-wrap { background: #eee; border-radius: 20px; margin: 10px 0; }
-  .progress-bar { height: 20px; border-radius: 20px; background: #4CAF50; text-align: center; color: white; line-height: 20px; }
+:root {
+  --bg: #0e0f13;
+  --surface: #16181f;
+  --surface2: #1e2029;
+  --border: #2a2d3a;
+  --accent: #f0c040;
+  --accent2: #4ade80;
+  --accent3: #60a5fa;
+  --accent4: #f87171;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+/* Header */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; }
+.logo span { color: var(--muted); }
+.exam-badge {
+  background: linear-gradient(135deg, #f0c04022, #f0c04044);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono); font-size: 11px;
+  padding: 5px 12px; border-radius: 999px; letter-spacing: 0.08em;
+}
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 2px; padding: 16px 28px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  overflow-x: auto;
+}
+.tab-btn {
+  background: none; border: none; color: var(--muted);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  padding: 10px 18px; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  white-space: nowrap; transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Content */
+.tab-content { display: none; padding: 28px; max-width: 1100px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* Dashboard Grid */
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px;
+}
+.stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.stat-card .value { font-family: var(--mono); font-size: 28px; font-weight: 700; }
+.stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* Section weights */
+.weights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.weight-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; position: relative; overflow: hidden;
+}
+.weight-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.weight-card.biz::before { background: var(--accent); }
+.weight-card.reas::before { background: var(--accent3); }
+.weight-card.eng::before { background: var(--accent2); }
+.weight-card.ga::before { background: #c084fc; }
+.weight-card .sec-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.weight-card .marks { font-family: var(--mono); font-size: 32px; font-weight: 700; }
+.weight-card .marks span { font-size: 14px; color: var(--muted); }
+.vuln-badge {
+  display: inline-block; font-size: 10px; padding: 2px 8px;
+  border-radius: 999px; margin-top: 6px; font-weight: 600;
+}
+.vuln { background: #f8717122; color: var(--accent4); border: 1px solid #f8717144; }
+.strong { background: #4ade8022; color: var(--accent2); border: 1px solid #4ade8044; }
+.medium { background: #60a5fa22; color: var(--accent3); border: 1px solid #60a5fa44; }
+
+/* Warning bar */
+.warn-bar {
+  background: #f0c04011; border: 1px solid #f0c04033;
+  border-radius: 10px; padding: 12px 16px;
+  font-size: 13px; color: var(--accent); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* Days counter */
+.days-row { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.days-input {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--mono); font-size: 28px; font-weight: 700;
+  width: 80px; text-align: center; border-radius: 8px; padding: 4px;
+}
+.days-input:focus { outline: 1px solid var(--accent); }
+.days-label { font-size: 13px; color: var(--muted); }
+
+/* Progress bar */
+.prog-section { margin-bottom: 28px; }
+.prog-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.prog-track { background: var(--surface2); border-radius: 999px; height: 8px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.5s ease; }
+
+/* Section header */
+.sec-hdr { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+/* Plan table */
+.plan-table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: var(--surface2); font-size: 11px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 12px;
+  text-align: left; border-bottom: 1px solid var(--border);
+}
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:hover { background: var(--surface2); }
+tbody td { padding: 10px 12px; font-size: 13px; vertical-align: middle; }
+tbody tr.done-row { opacity: 0.45; }
+.day-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.section-tag {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+}
+.tag-biz { background: #f0c04022; color: var(--accent); border: 1px solid #f0c04044; }
+.tag-reas { background: #60a5fa22; color: var(--accent3); border: 1px solid #60a5fa44; }
+.tag-eng { background: #f8717122; color: var(--accent4); border: 1px solid #f8717144; }
+.tag-econ { background: #4ade8022; color: var(--accent2); border: 1px solid #4ade8044; }
+.tag-stat { background: #c084fc22; color: #c084fc; border: 1px solid #c084fc44; }
+.tag-comp { background: #22d3ee22; color: #22d3ee; border: 1px solid #22d3ee44; }
+.tag-ga { background: #fb923c22; color: #fb923c; border: 1px solid #fb923c44; }
+.tag-rev { background: #818cf822; color: #818cf8; border: 1px solid #818cf844; }
+.tag-acc { background: #34d39922; color: #34d399; border: 1px solid #34d39944; }
+.topic-cell { max-width: 320px; line-height: 1.5; }
+.resource-link { color: var(--accent3); text-decoration: none; font-size: 12px; }
+.resource-link:hover { text-decoration: underline; }
+.check-btn {
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 2px solid var(--border); background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.check-btn.checked { background: var(--accent2); border-color: var(--accent2); }
+.check-btn svg { display: none; }
+.check-btn.checked svg { display: block; }
+
+/* TODAY highlight */
+.today-row td { background: #f0c04008; }
+.today-row td:first-child { border-left: 2px solid var(--accent); }
+
+/* Topic mastery */
+.topic-grid { display: grid; gap: 8px; }
+.topic-row {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.topic-name { flex: 1; min-width: 180px; font-size: 13px; font-weight: 500; }
+.topic-freq { font-family: var(--mono); font-size: 11px; color: var(--muted); width: 50px; }
+.topic-pri { width: 60px; }
+.star-row { display: flex; gap: 4px; }
+.star {
+  width: 24px; height: 24px; cursor: pointer; font-size: 18px;
+  color: var(--border); transition: color 0.1s; background: none; border: none;
+  line-height: 1;
+}
+.star.lit { color: var(--accent); }
+.pri-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.pri-high { background: #f0c04022; color: var(--accent); }
+.pri-med  { background: #60a5fa22; color: var(--accent3); }
+.pri-vuln { background: #f8717122; color: var(--accent4); }
+.pri-new  { background: #c084fc22; color: #c084fc; }
+
+/* Resources */
+.res-grid { display: grid; gap: 10px; }
+.res-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.res-icon { font-size: 22px; flex-shrink: 0; }
+.res-body { flex: 1; min-width: 200px; }
+.res-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.res-desc { font-size: 12px; color: var(--muted); }
+.res-action { flex-shrink: 0; }
+.res-btn {
+  display: inline-block; background: var(--accent3); color: #000;
+  font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px;
+  text-decoration: none; transition: opacity 0.15s;
+}
+.res-btn:hover { opacity: 0.8; }
+.res-btn.yellow { background: var(--accent); }
+.res-btn.green  { background: var(--accent2); }
+.res-btn.purple { background: #c084fc; }
+.res-btn.orange { background: #fb923c; }
+
+/* Progress Log */
+.log-form {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px;
+}
+.form-group label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+.form-input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--sans); font-size: 14px;
+  padding: 8px 12px; border-radius: 8px;
+}
+.form-input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+.submit-row { display: flex; gap: 10px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--accent); color: #000; font-weight: 700;
+  font-family: var(--sans); font-size: 13px; padding: 9px 20px;
+  border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-danger {
+  background: none; color: var(--accent4); border: 1px solid var(--accent4);
+  font-family: var(--sans); font-size: 13px; padding: 8px 16px;
+  border-radius: 8px; cursor: pointer; transition: all 0.15s;
+}
+.btn-danger:hover { background: var(--accent4); color: #fff; }
+
+/* Score calc */
+.score-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-top: 20px;
+}
+.score-big { font-family: var(--mono); font-size: 42px; font-weight: 700; }
+.score-big.good { color: var(--accent2); }
+.score-big.mid  { color: var(--accent); }
+.score-big.bad  { color: var(--accent4); }
+
+/* Responsive */
+@media(max-width: 600px) {
+  .header { padding: 14px 16px; }
+  .tabs { padding: 12px 16px 0; }
+  .tab-content { padding: 16px; }
+}
 </style>
-<script>
-// Tab functionality
-function openTab(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-
-// Load/save data using localStorage
-function saveData(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-function loadData(key) {
-  return JSON.parse(localStorage.getItem(key));
-}
-
-// Initialize checkboxes, dropdowns etc. from saved state
-window.onload = function() {
-  // open first tab by default
-  document.getElementById("Dashboard").style.display = "block";
-  document.getElementsByClassName("tablinks")[0].className += " active";
-
-  // load plan checkboxes
-  var planState = loadData("planState") || {};
-  document.querySelectorAll('#planTable input[type="checkbox"]').forEach(function(cb) {
-    cb.checked = planState[cb.id] || false;
-    cb.addEventListener('change', function() {
-      planState[cb.id] = cb.checked;
-      saveData("planState", planState);
-    });
-  });
-
-  // load topic ratings
-  var topicRatings = loadData("topicRatings") || {};
-  document.querySelectorAll('#topicTable select').forEach(function(sel) {
-    sel.value = topicRatings[sel.id] || "1";
-    sel.addEventListener('change', function() {
-      topicRatings[sel.id] = sel.value;
-      saveData("topicRatings", topicRatings);
-    });
-  });
-
-  // load progress log
-  var progressLog = loadData("progressLog") || [];
-  renderProgressLog(progressLog);
-
-  // days left calculator (replace with actual exam date)
-  document.getElementById('daysLeft').innerText = '21 (manual)';
-}
-</script>
 </head>
 <body>
-<h1>🎯 JMI B04 Entrance Prep Tracker 2026</h1>
-<div class="tab">
-  <button class="tablinks active" onclick="openTab(event, 'Dashboard')">📊 Dashboard</button>
-  <button class="tablinks" onclick="openTab(event, 'Plan')">📅 21-Day Plan</button>
-  <button class="tablinks" onclick="openTab(event, 'Topics')">🧠 Topic Mastery</button>
-  <button class="tablinks" onclick="openTab(event, 'Resources')">🔗 Resources</button>
-  <button class="tablinks" onclick="openTab(event, 'Progress')">📈 Progress Log</button>
+
+<div class="header">
+  <div class="logo">JMI<span>/</span>B04<span> · </span>PREP TRACKER</div>
+  <div class="exam-badge">TARGET: 70 / 100</div>
 </div>
 
-<!-- Dashboard Tab -->
-<div id="Dashboard" class="tabcontent">
-  <h3>Section Weights (Official Syllabus 2026-27)</h3>
-  <table>
-    <tr><th>Section</th><th>Marks</th><th>Questions</th></tr>
-    <tr><td>Business & Economic Awareness</td><td>30</td><td>30</td></tr>
-    <tr><td>Reasoning & Quantitative Aptitude</td><td>25</td><td>25</td></tr>
-    <tr><td>General English</td><td>25</td><td>25</td></tr>
-    <tr><td>General Awareness</td><td>20</td><td>20</td></tr>
-  </table>
-  <p><b>Target Score:</b> 60-75 / 100</p>
-  <p><b>Days Left:</b> <span id="daysLeft">21</span> (adjust as per exam date)</p>
-  <div class="progress-wrap">
-    <div class="progress-bar" style="width:0%;" id="overallProgress">0%</div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('plan',this)">📅 21-Day Plan</button>
+  <button class="tab-btn" onclick="switchTab('topics',this)">🧠 Topic Mastery</button>
+  <button class="tab-btn" onclick="switchTab('resources',this)">🔗 Resources</button>
+  <button class="tab-btn" onclick="switchTab('log',this)">📈 Progress Log</button>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="tab-dashboard" class="tab-content active">
+
+  <div class="days-row">
+    <input type="number" class="days-input" id="daysLeft" value="21" min="0" max="21" oninput="save('days',this.value)">
+    <div class="days-label">days left<br><span style="color:var(--muted);font-size:11px">edit to countdown</span></div>
   </div>
-  <p style="background:#fff3cd; padding:10px; border-radius:5px;">⚠️ Negative marking: -0.25 per wrong answer. Attempt only if ≥60% confident. Skip unsure ones.</p>
+
+  <div class="weights-grid">
+    <div class="weight-card biz">
+      <div class="sec-name">Business & Economic Awareness</div>
+      <div class="marks">30<span> marks</span></div>
+      <span class="vuln-badge strong">✓ YOUR STRENGTH</span>
+    </div>
+    <div class="weight-card reas">
+      <div class="sec-name">Reasoning & Quantitative Aptitude</div>
+      <div class="marks">25<span> marks</span></div>
+      <span class="vuln-badge vuln">⚠ VULNERABLE</span>
+    </div>
+    <div class="weight-card eng">
+      <div class="sec-name">General English</div>
+      <div class="marks">25<span> marks</span></div>
+      <span class="vuln-badge vuln">⚠ VULNERABLE</span>
+    </div>
+    <div class="weight-card ga">
+      <div class="sec-name">General Awareness</div>
+      <div class="marks">20<span> marks</span></div>
+      <span class="vuln-badge vuln">⚠ VULNERABLE</span>
+    </div>
+  </div>
+
+  <div class="warn-bar">
+    ⚡ Negative marking: <strong>−0.25 per wrong answer.</strong>&nbsp; Rule: Attempt only if ≥60% confident. Skip if unsure — 4 wrong = −1 mark = same as skipping 1 question.
+  </div>
+
+  <div class="sec-hdr">To hit 70 — you need this minimum split</div>
+  <div class="dash-grid">
+    <div class="stat-card">
+      <div class="label">Business (30M)</div>
+      <div class="value" style="color:var(--accent)">22+</div>
+      <div class="sub">Your strength → aim high</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Reasoning (25M)</div>
+      <div class="value" style="color:var(--accent3)">16+</div>
+      <div class="sub">Only attempt sure ones</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">English (25M)</div>
+      <div class="value" style="color:var(--accent4)">16+</div>
+      <div class="sub">RC = free marks, nail it</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">GA (20M)</div>
+      <div class="value" style="color:#c084fc">14+</div>
+      <div class="sub">Static GK > current affairs</div>
+    </div>
+  </div>
+
+  <div class="prog-section">
+    <div class="prog-label">
+      <span>Plan completion</span>
+      <span id="planPct">0 / 21 days done</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="planBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="prog-section">
+    <div class="prog-label">
+      <span>Overall accuracy (from log)</span>
+      <span id="accPct">— no data yet</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="accBar" style="width:0%;background:linear-gradient(90deg,var(--accent3),var(--accent2))"></div></div>
+  </div>
+
 </div>
 
-<!-- 21-Day Plan Tab -->
-<div id="Plan" class="tabcontent">
-  <h3>21-Day Study Plan (Mixed Subjects)</h3>
-  <table id="planTable">
-    <tr><th>Day</th><th>Section Focus</th><th>Topics to Cover</th><th>Resource</th><th>Done</th></tr>
-    <tr><td>1</td><td>Business</td><td>Fayol 14 principles; POSDC</td><td>NCERT Ch 2; Rajat Arora playlist</td><td><input type="checkbox" id="d1"></td></tr>
-    <tr><td>2</td><td>Business</td><td>Taylor's Scientific Mgmt; Coordination</td><td>NCERT Ch 2 + Rajat Arora</td><td><input type="checkbox" id="d2"></td></tr>
-    <tr><td>3</td><td>Business</td><td>Staffing, Directing, Leadership, Grapevine</td><td>NCERT Ch 6-7</td><td><input type="checkbox" id="d3"></td></tr>
-    <tr><td>4</td><td>Business</td><td>Marketing (4Ps, Branding, Consumer Protection)</td><td>NCERT Ch 11-12</td><td><input type="checkbox" id="d4"></td></tr>
-    <tr><td>5</td><td>Economics</td><td>GDP, GNP, NNP, National Income concepts</td><td>NCERT Macro Ch 2</td><td><input type="checkbox" id="d5"></td></tr>
-    <tr><td>6</td><td>Economics</td><td>Money & Banking (RBI tools, CRR, SLR)</td><td>NCERT Macro Ch 3</td><td><input type="checkbox" id="d6"></td></tr>
-    <tr><td>7</td><td>Economics</td><td>Inflation, Unemployment, Stagflation, 1991 reforms</td><td>NCERT Macro Ch 4-5</td><td><input type="checkbox" id="d7"></td></tr>
-    <tr><td>8</td><td>Accounts</td><td>Partnership basics, profit-sharing, goodwill</td><td>NCERT Accounts Part 1 Ch 1-2</td><td><input type="checkbox" id="d8"></td></tr>
-    <tr><td>9</td><td>Accounts</td><td>Financial Ratios, Cash Flow Statement</td><td>NCERT Accounts Part 2 Ch 3-4</td><td><input type="checkbox" id="d9"></td></tr>
-    <tr><td>10</td><td>Accounts</td><td>Share capital, Forfeiture, Primary/Secondary markets</td><td>NCERT Accounts + Ch 10</td><td><input type="checkbox" id="d10"></td></tr>
-    <tr><td>11</td><td>Reasoning</td><td>Number Series (30 Qs)</td><td>IndiaBix.com</td><td><input type="checkbox" id="d11"></td></tr>
-    <tr><td>12</td><td>Reasoning</td><td>Blood Relations, Directions (30 Qs each)</td><td>IndiaBix</td><td><input type="checkbox" id="d12"></td></tr>
-    <tr><td>13</td><td>Reasoning</td><td>Coding-Decoding, Seating, Analogies (30 Qs)</td><td>IndiaBix + Testbook</td><td><input type="checkbox" id="d13"></td></tr>
-    <tr><td>14</td><td>Quant</td><td>Percentages, Profit/Loss, Ratio, Average</td><td>IndiaBix + Career Ride</td><td><input type="checkbox" id="d14"></td></tr>
-    <tr><td>15</td><td>Quant</td><td>Time & Work, Distance, Trains, Simple Interest, Probability</td><td>IndiaBix + Career Ride</td><td><input type="checkbox" id="d15"></td></tr>
-    <tr><td>16</td><td>Quant/Stats</td><td>Mean, Median, Mode, Correlation, Frequency dist.</td><td>NCERT Class 11 Stats Ch 15-16</td><td><input type="checkbox" id="d16"></td></tr>
-    <tr><td>17</td><td>English</td><td>Tenses, Prepositions, Subject-verb agreement (30 Qs)</td><td>EnglishGrammar101.com</td><td><input type="checkbox" id="d17"></td></tr>
-    <tr><td>18</td><td>English</td><td>Synonyms, Antonyms, Error detection, RC strategy</td><td>WordPandit.com</td><td><input type="checkbox" id="d18"></td></tr>
-    <tr><td>19</td><td>Computer</td><td>Hardware, Software, Networks, Protocols</td><td>GKToday Computer PDF</td><td><input type="checkbox" id="d19"></td></tr>
-    <tr><td>20</td><td>GA</td><td>Current affairs Sep 2025 - Feb 2026</td><td>GKToday Monthly PDF</td><td><input type="checkbox" id="d20"></td></tr>
-    <tr><td>21</td><td>REVISION</td><td>Full mock (2025 PYQ), review mistakes</td><td>Your PYQ files</td><td><input type="checkbox" id="d21"></td></tr>
-  </table>
-</div>
+<!-- ══════════════ 21-DAY PLAN ══════════════ -->
+<div id="tab-plan" class="tab-content">
+  <div class="sec-hdr">Mixed-subject plan — vulnerable areas get daily attention from Day 1</div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:16px">⚡ Days 1–4 already fixed: Fayol ✓ done. Marketing = TODAY (Day 2). Plan auto-mixes Reasoning & English daily from Day 3 onward so weak areas build habit, not panic.</div>
 
-<!-- Topic Mastery Tab -->
-<div id="Topics" class="tabcontent">
-  <h3>Topic Mastery Tracker (Rate yourself 1-5)</h3>
-  <table id="topicTable">
-    <tr><th>Section</th><th>Topic</th><th>Repeat Freq (9yr)</th><th>Priority</th><th>My Rating</th></tr>
-    <tr><td>Business</td><td>Fayol 14 principles</td><td>9</td><td>HIGH</td><td><select id="t1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>POSDC of management</td><td>9</td><td>HIGH</td><td><select id="t2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Taylor scientific management</td><td>8</td><td>MED</td><td><select id="t3"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Staffing – recruitment & training</td><td>8</td><td>MED</td><td><select id="t4"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Marketing 4Ps + Branding</td><td>9</td><td>HIGH</td><td><select id="t5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Consumer Protection Act 2019</td><td>8</td><td>MED</td><td><select id="t6"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Financial markets (SEBI)</td><td>8</td><td>MED</td><td><select id="t7"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Business</td><td>Working capital & financial planning</td><td>7</td><td>MED</td><td><select id="t8"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Accounts</td><td>Partnership profit-sharing ratio</td><td>9</td><td>HIGH</td><td><select id="t9"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Accounts</td><td>Goodwill valuation</td><td>8</td><td>MED</td><td><select id="t10"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Accounts</td><td>Cash flow statement</td><td>8</td><td>MED</td><td><select id="t11"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Accounts</td><td>Financial ratios</td><td>8</td><td>MED</td><td><select id="t12"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Accounts</td><td>Share capital & forfeiture</td><td>7</td><td>MED</td><td><select id="t13"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Economics</td><td>GDP, GNP, National Income</td><td>9</td><td>HIGH</td><td><select id="t14"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Economics</td><td>RBI monetary tools</td><td>8</td><td>MED</td><td><select id="t15"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Economics</td><td>Inflation & stagflation</td><td>8</td><td>MED</td><td><select id="t16"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Economics</td><td>Unemployment types</td><td>7</td><td>MED</td><td><select id="t17"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Economics</td><td>1991 reforms & MGNREGA</td><td>7</td><td>MED</td><td><select id="t18"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Reasoning</td><td>Number series</td><td>9</td><td>HIGH</td><td><select id="t19"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Reasoning</td><td>Blood relations</td><td>9</td><td>HIGH</td><td><select id="t20"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Reasoning</td><td>Directions & distance</td><td>9</td><td>HIGH</td><td><select id="t21"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Reasoning</td><td>Coding-decoding</td><td>8</td><td>MED</td><td><select id="t22"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Reasoning</td><td>Seating/ranking order</td><td>7</td><td>MED</td><td><select id="t23"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Quant/Stats</td><td>Mean, Median, Mode</td><td>7</td><td>MED</td><td><select id="t24"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Quant/Stats</td><td>Correlation (Pearson r)</td><td>5</td><td>NEW</td><td><select id="t25"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Quant/Stats</td><td>Frequency distribution & class width</td><td>6</td><td>NEW</td><td><select id="t26"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Aptitude</td><td>Percentages, Profit/Loss, Ratio</td><td>9</td><td>HIGH</td><td><select id="t27"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Aptitude</td><td>Time & Work, Distance, Trains</td><td>9</td><td>HIGH</td><td><select id="t28"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Aptitude</td><td>Simple Interest, Probability</td><td>7</td><td>MED</td><td><select id="t29"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Computer</td><td>Hardware basics</td><td>NEW</td><td>NEW</td><td><select id="t30"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Computer</td><td>Software types</td><td>NEW</td><td>NEW</td><td><select id="t31"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Computer</td><td>Networks (LAN, WAN, topologies)</td><td>NEW</td><td>NEW</td><td><select id="t32"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>Computer</td><td>Protocols (DNS, HTTP, SSL)</td><td>NEW</td><td>NEW</td><td><select id="t33"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>English</td><td>Reading comprehension</td><td>7</td><td>MED</td><td><select id="t34"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>English</td><td>Tenses & grammar</td><td>7</td><td>MED</td><td><select id="t35"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>English</td><td>Synonyms & antonyms</td><td>7</td><td>MED</td><td><select id="t36"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>English</td><td>Sentence correction & prepositions</td><td>6</td><td>NEW</td><td><select id="t37"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-    <tr><td>GA</td><td>Current affairs (6 months)</td><td>7</td><td>MED</td><td><select id="t38"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
-  </table>
-</div>
-
-<!-- Resources Tab -->
-<div id="Resources" class="tabcontent">
-  <h3>Free Resources with Direct Links</h3>
+  <div class="plan-table-wrap">
   <table>
-    <tr><th>Section</th><th>Resource</th><th>Link</th><th>What to Study</th></tr>
-    <tr><td>Business</td><td>Rajat Arora Business Studies</td><td><a href="https://www.youtube.com/playlist?list=PLvMJoS0CxPEmcZvf7opMxlNCr8s9pHMs" target="_blank">YouTube Playlist</a></td><td>Fayol, POSDC, Marketing</td></tr>
-    <tr><td>Business</td><td>NCERT Class 12 Business Studies</td><td><a href="https://ncert.nic.in/textbook.php/bess1=1-12" target="_blank">NCERT PDF</a></td><td>Ch 1-2, 6-7, 10-12</td></tr>
-    <tr><td>Accounts</td><td>Rajat Arora Accounts</td><td><a href="https://www.youtube.com/playlist?list=PLvkJoS0CxPEmeAw-ojNRNCTM8eMeSRu" target="_blank">YouTube Playlist</a></td><td>Partnership, Cash Flow, Ratios</td></tr>
-    <tr><td>Accounts</td><td>NCERT Class 12 Accountancy</td><td><a href="https://ncert.nic.in/textbook.php/aece210-1-12" target="_blank">NCERT PDF</a></td><td>Part 1 Ch 1-4</td></tr>
-    <tr><td>Economics</td><td>NCERT Class 12 Macro Economics</td><td><a href="https://ncert.nic.in/textbook.php/leme201-1-12" target="_blank">NCERT PDF</a></td><td>Ch 2-5</td></tr>
-    <tr><td>Economics</td><td>Rajat Arora Macro</td><td><a href="https://www.youtube.com/playlist?list=PLvkJoS0CxPEmZ94hi64W_JGYMV7anTZS" target="_blank">YouTube Playlist</a></td><td>Inflation, Money, Growth</td></tr>
-    <tr><td>Reasoning</td><td>IndiaBix Logical Reasoning</td><td><a href="https://www.indiabix.com/logical-reasoning/questions-and-answers/" target="_blank">IndiaBix.com</a></td><td>Number series, Blood, Directions</td></tr>
-    <tr><td>Quant</td><td>IndiaBix Aptitude</td><td><a href="https://www.indiabix.com/aptitude/questions-and-answers/" target="_blank">IndiaBix.com</a></td><td>Percentage, Profit, Time, SI</td></tr>
-    <tr><td>Stats</td><td>NCERT Class 11 Statistics</td><td><a href="https://ncert.nic.in/textbook.php/kest101-1-12" target="_blank">NCERT PDF</a></td><td>Ch 15-16</td></tr>
-    <tr><td>English</td><td>WordPandit Vocabulary</td><td><a href="https://wordpandit.com/" target="_blank">WordPandit.com</a></td><td>Synonyms/Antonyms daily</td></tr>
-    <tr><td>English</td><td>EnglishGrammar101</td><td><a href="https://www.englishgrammar101.com/" target="_blank">Grammar101.com</a></td><td>Tenses, Prepositions</td></tr>
-    <tr><td>GA</td><td>GKToday Current Affairs PDF</td><td><a href="https://www.gktoday.in/current-affairs/" target="_blank">GKToday.in</a></td><td>Monthly PDF free</td></tr>
-    <tr><td>Computer</td><td>GKToday Computer Awareness</td><td><a href="https://www.gktoday.in/computer-awareness/" target="_blank">GKToday.in</a></td><td>All in one PDF</td></tr>
-    <tr><td>Practice</td><td>Your PYQ files (local)</td><td>N/A (Your drive)</td><td>Full mocks</td></tr>
+    <thead>
+      <tr>
+        <th>Day</th><th>Focus</th><th>Topics</th><th>Resource</th><th style="width:36px">✓</th>
+      </tr>
+    </thead>
+    <tbody id="planBody"></tbody>
   </table>
+  </div>
 </div>
 
-<!-- Progress Log Tab -->
-<div id="Progress" class="tabcontent">
-  <h3>Daily Progress Log</h3>
-  <p>Record each study session. Data saved in your browser.</p>
-  <form onsubmit="addLogEntry(); return false;">
-    <label>Date: <input type="date" id="logDate" required></label><br><br>
-    <label>Hours Studied: <input type="number" id="logHours" min="0" step="0.5" required></label><br><br>
-    <label>Questions Attempted: <input type="number" id="logAttempted" min="0" required></label><br><br>
-    <label>Correct: <input type="number" id="logCorrect" min="0" required></label><br><br>
-    <label>Wrong: <input type="number" id="logWrong" min="0" required></label><br><br>
-    <button class="btn">Add Entry</button>
-  </form>
-  <button class="btn danger" onclick="clearLog()">Clear All Logs</button>
-  <h4>Log History</h4>
-  <table id="logTable">
-    <tr><th>Date</th><th>Hours</th><th>Attempted</th><th>Correct</th><th>Wrong</th><th>Accuracy</th></tr>
-  </table>
-  <div id="logStats"></div>
+<!-- ══════════════ TOPIC MASTERY ══════════════ -->
+<div id="tab-topics" class="tab-content">
+  <div class="sec-hdr">Rate yourself 1–5 stars. Red priority = your vulnerable zone</div>
+  <div class="topic-grid" id="topicGrid"></div>
+</div>
+
+<!-- ══════════════ RESOURCES ══════════════ -->
+<div id="tab-resources" class="tab-content">
+  <div class="sec-hdr">Curated for your weak areas — Quant, English, GA get extra coverage</div>
+  <div class="res-grid" id="resGrid"></div>
+</div>
+
+<!-- ══════════════ PROGRESS LOG ══════════════ -->
+<div id="tab-log" class="tab-content">
+  <div class="sec-hdr">Log every session — track your accuracy trend</div>
+
+  <div class="log-form">
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" class="form-input" id="logDate">
+    </div>
+    <div class="form-group">
+      <label>Hours Studied</label>
+      <input type="number" class="form-input" id="logHours" min="0" step="0.5" placeholder="e.g. 3.5">
+    </div>
+    <div class="form-group">
+      <label>Qs Attempted</label>
+      <input type="number" class="form-input" id="logAttempted" min="0" placeholder="e.g. 40">
+    </div>
+    <div class="form-group">
+      <label>Correct</label>
+      <input type="number" class="form-input" id="logCorrect" min="0" placeholder="e.g. 28">
+    </div>
+    <div class="form-group">
+      <label>Wrong</label>
+      <input type="number" class="form-input" id="logWrong" min="0" placeholder="e.g. 6">
+    </div>
+    <div class="form-group">
+      <label>Section</label>
+      <select class="form-input" id="logSection">
+        <option>Business</option><option>Reasoning</option><option>English</option>
+        <option>Economics</option><option>Accounts</option><option>Stats/Quant</option>
+        <option>Computer</option><option>GA</option><option>Full Mock</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="submit-row">
+    <button class="btn-primary" onclick="addLog()">Add Entry</button>
+    <button class="btn-danger" onclick="clearLog()">Clear All</button>
+  </div>
+
+  <div class="score-card" id="liveScore" style="display:none;margin-top:20px">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">PROJECTED MOCK SCORE</div>
+    <div class="score-big" id="scoreVal">—</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px" id="scoreMsg"></div>
+  </div>
+
+  <div style="margin-top:20px;overflow-x:auto">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Section</th><th>Hours</th><th>Attempted</th><th>Correct</th><th>Wrong</th><th>Score (−0.25)</th><th>Accuracy</th></tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
-// Progress log functions
-function renderProgressLog(log) {
-  var tableBody = document.querySelector('#logTable tbody');
-  if (!tableBody) {
-    tableBody = document.createElement('tbody');
-    document.getElementById('logTable').appendChild(tableBody);
-  }
-  tableBody.innerHTML = '';
-  var totalCorrect = 0, totalWrong = 0, totalAttempted = 0;
-  log.forEach(function(entry) {
-    var row = tableBody.insertRow();
-    row.insertCell().textContent = entry.date;
-    row.insertCell().textContent = entry.hours;
-    row.insertCell().textContent = entry.attempted;
-    row.insertCell().textContent = entry.correct;
-    row.insertCell().textContent = entry.wrong;
-    var acc = (entry.attempted > 0) ? ((entry.correct / entry.attempted)*100).toFixed(1) + '%' : 'N/A';
-    row.insertCell().textContent = acc;
-    totalCorrect += entry.correct;
-    totalWrong += entry.wrong;
-    totalAttempted += entry.attempted;
+// ── DATA ──────────────────────────────────────────────────
+const PLAN = [
+  {sec:'Business', tag:'tag-biz', topics:'Fayol 14 Principles + POSDC (Planning, Org, Staffing, Directing, Controlling)', resource:'NCERT Class 12 BS Ch 2', url:'https://ncert.nic.in/textbook/pdf/bess201.pdf', note:'DONE ✓'},
+  {sec:'Business', tag:'tag-biz', topics:'Marketing Mix (4Ps), Branding, Sales Promotion — 2025 PYQ Qs 35–37 match exactly this', resource:'NCERT Ch 11 + Rajat Arora', url:'https://www.youtube.com/playlist?list=PLvMJoS0CxPEmcZvf7opMxlNCr8s9pHMs', note:'TODAY'},
+  {sec:'Reasoning', tag:'tag-reas', topics:'Number Series — 3 pattern types: +n, ×n, n² ± k. Do 30 Qs on IndiaBix timed (15 min)', resource:'IndiaBix Number Series', url:'https://www.indiabix.com/verbal-reasoning/number-series/'},
+  {sec:'English', tag:'tag-eng', topics:'Reading Comprehension — strategy: read question FIRST, then passage. Do 2 RC passages practice', resource:'WordPandit RC Practice', url:'https://wordpandit.com/reading-comprehension/'},
+  {sec:'Economics', tag:'tag-econ', topics:'GDP, GNP, NNP — factor cost vs market price formula. GDP at factor cost = GDP at MP − Indirect taxes + Subsidies', resource:'NCERT Macro Ch 2', url:'https://ncert.nic.in/textbook/pdf/leme201.pdf'},
+  {sec:'Reasoning', tag:'tag-reas', topics:'Blood Relations (15 Qs) + Direction & Distance (15 Qs) — both appear every year 9/9', resource:'IndiaBix Reasoning', url:'https://www.indiabix.com/logical-reasoning/blood-relations/'},
+  {sec:'English', tag:'tag-eng', topics:'Grammar — Tenses (Perfect tenses focus), Subject-Verb Agreement, Prepositions. 20 fill-in-blank Qs', resource:'EnglishGrammar101.com', url:'https://www.englishgrammar101.com/'},
+  {sec:'Accounts', tag:'tag-acc', topics:'Partnership: Profit-sharing ratio, Admission of partner, Goodwill calculation — 3 years purchase method', resource:'NCERT Accounts Part 1 Ch 1', url:'https://ncert.nic.in/textbook/pdf/aece101.pdf'},
+  {sec:'Economics', tag:'tag-econ', topics:'Inflation types (demand-pull vs cost-push), RBI tools: CRR, SLR, Repo Rate, Reverse Repo — RBI raises CRR → money supply ↓', resource:'NCERT Macro Ch 3', url:'https://ncert.nic.in/textbook/pdf/leme203.pdf'},
+  {sec:'Reasoning', tag:'tag-reas', topics:'Coding-Decoding (letter shift patterns) + Seating Arrangement (circular & linear). 15 Qs each', resource:'IndiaBix Coding-Decoding', url:'https://www.indiabix.com/verbal-reasoning/coding-decoding/'},
+  {sec:'Stats', tag:'tag-stat', topics:'Mean, Median, Mode — formula + 25 calculation problems. Median = middle value of sorted data. Mode = most frequent', resource:'Khan Academy Statistics', url:'https://www.khanacademy.org/math/statistics-probability'},
+  {sec:'English', tag:'tag-eng', topics:'Synonyms & Antonyms — 40 high-frequency words from PYQ papers: trivial, acquisitive, grapevine, esprit de corps', resource:'WordPandit Vocabulary', url:'https://wordpandit.com/'},
+  {sec:'Business', tag:'tag-biz', topics:'Consumer Protection Act 2019 — DCDRC jurisdiction (under ₹1 Cr), SCDRC, NCDRC. 2025 PYQ Q38 exact match', resource:'NCERT Ch 12', url:'https://ncert.nic.in/textbook/pdf/bess212.pdf'},
+  {sec:'Stats', tag:'tag-stat', topics:'Correlation (Pearson r: range −1 to +1), Frequency Distribution, Class width = (upper − lower boundary)', resource:'NCERT Class 11 Ch 15–16', url:'https://ncert.nic.in/textbook/pdf/kest1st.pdf'},
+  {sec:'Reasoning', tag:'tag-reas', topics:'Statement-Conclusion logic + Calendar problems (day of week formula). 15 Qs each — quick wins', resource:'IndiaBix Logical Reasoning', url:'https://www.indiabix.com/logical-reasoning/statement-and-conclusions/'},
+  {sec:'Accounts', tag:'tag-acc', topics:'Cash Flow Statement — 3 activities: Operating, Investing, Financing. Quick Ratio = (CA − Inventory) / CL. Ideal = 1:1', resource:'NCERT Accounts Part 2 Ch 3–4', url:'https://ncert.nic.in/textbook/pdf/aece203.pdf'},
+  {sec:'Computer', tag:'tag-comp', topics:'Memory: Cache > RAM > ROM > HDD. Networks: LAN/WAN/MAN. Topologies: Bus (single cable), Star, Ring. DNS, SSL/TLS, HTTP', resource:'GKToday Computer Awareness', url:'https://www.gktoday.in/computer-awareness/'},
+  {sec:'GA', tag:'tag-ga', topics:'Current Affairs Nov 2025–Apr 2026: focus on India economy, govt schemes, sports, constitutional facts. GDP data, MGNREGA, RTE Act', resource:'GKToday Monthly PDF', url:'https://www.gktoday.in/current-affairs/'},
+  {sec:'English', tag:'tag-eng', topics:'Error Spotting + Sentence Correction + Comparative/Superlative forms. 25 practice Qs from PYQ pattern', resource:'WordPandit Grammar', url:'https://wordpandit.com/grammar/'},
+  {sec:'Accounts', tag:'tag-acc', topics:'Share Capital types (Authorised/Issued/Called-up/Paid-up) — Fixed Capital vs Working Capital. Skip complex numericals', resource:'NCERT Accounts Ch 8', url:'https://ncert.nic.in/textbook/pdf/aece108.pdf'},
+  {sec:'Revision', tag:'tag-rev', topics:'MOCK 1: Full 2024 PYQ paper (90 min timed, strict −0.25). Then: log every wrong answer, find pattern, revise those topics', resource:'Your PYQ folder', url:'#'},
+];
+
+const TOPICS = [
+  {sec:'Business',  topic:'Fayol 14 principles',           freq:'9/9', pri:'HIGH'},
+  {sec:'Business',  topic:'POSDC functions of mgmt',       freq:'9/9', pri:'HIGH'},
+  {sec:'Business',  topic:'Taylor Scientific Management',  freq:'8/9', pri:'MED'},
+  {sec:'Business',  topic:'Staffing & recruitment',        freq:'8/9', pri:'MED'},
+  {sec:'Business',  topic:'Marketing 4Ps + Branding',      freq:'9/9', pri:'HIGH'},
+  {sec:'Business',  topic:'Consumer Protection Act 2019',  freq:'8/9', pri:'MED'},
+  {sec:'Business',  topic:'Financial markets (SEBI, primary/secondary)', freq:'8/9', pri:'MED'},
+  {sec:'Business',  topic:'Working capital & financial planning', freq:'7/9', pri:'MED'},
+  {sec:'Accounts',  topic:'Partnership profit-sharing ratio', freq:'9/9', pri:'HIGH'},
+  {sec:'Accounts',  topic:'Goodwill valuation (3yr purchase)', freq:'7/9', pri:'MED'},
+  {sec:'Accounts',  topic:'Cash flow statement (3 activities)', freq:'8/9', pri:'MED'},
+  {sec:'Accounts',  topic:'Financial ratios (Quick/Current)', freq:'8/9', pri:'MED'},
+  {sec:'Accounts',  topic:'Share capital types',           freq:'7/9', pri:'MED'},
+  {sec:'Economics', topic:'GDP, GNP, NNP — factor cost formula', freq:'9/9', pri:'HIGH'},
+  {sec:'Economics', topic:'RBI monetary tools (CRR, SLR, Repo)', freq:'8/9', pri:'MED'},
+  {sec:'Economics', topic:'Inflation types & Stagflation',  freq:'8/9', pri:'MED'},
+  {sec:'Economics', topic:'Unemployment types (structural, cyclical, frictional)', freq:'7/9', pri:'MED'},
+  {sec:'Economics', topic:'1991 reforms & MGNREGA',        freq:'6/9', pri:'MED'},
+  {sec:'Reasoning', topic:'Number series',                 freq:'9/9', pri:'VULN'},
+  {sec:'Reasoning', topic:'Blood relations',               freq:'9/9', pri:'VULN'},
+  {sec:'Reasoning', topic:'Directions & distance',         freq:'9/9', pri:'VULN'},
+  {sec:'Reasoning', topic:'Coding-decoding',               freq:'8/9', pri:'VULN'},
+  {sec:'Reasoning', topic:'Seating/ranking order',         freq:'7/9', pri:'VULN'},
+  {sec:'Stats',     topic:'Mean, Median, Mode (calculation)', freq:'7/9', pri:'VULN'},
+  {sec:'Stats',     topic:'Correlation (Pearson r)',       freq:'5/9', pri:'NEW'},
+  {sec:'Stats',     topic:'Frequency distribution & class width', freq:'6/9', pri:'NEW'},
+  {sec:'Aptitude',  topic:'Profit/Loss, Percentages, Ratio', freq:'8/9', pri:'VULN'},
+  {sec:'Computer',  topic:'Memory types (Cache/RAM/ROM)',  freq:'5/9', pri:'NEW'},
+  {sec:'Computer',  topic:'Networks & topologies',         freq:'5/9', pri:'NEW'},
+  {sec:'Computer',  topic:'Protocols (DNS, HTTP, SSL/TLS)', freq:'5/9', pri:'NEW'},
+  {sec:'English',   topic:'Reading comprehension',         freq:'7/9', pri:'VULN'},
+  {sec:'English',   topic:'Tenses & grammar',              freq:'7/9', pri:'VULN'},
+  {sec:'English',   topic:'Synonyms & antonyms',           freq:'7/9', pri:'VULN'},
+  {sec:'English',   topic:'Prepositions & sentence correction', freq:'6/9', pri:'VULN'},
+  {sec:'GA',        topic:'Current affairs (6 months)',    freq:'7/9', pri:'VULN'},
+  {sec:'GA',        topic:'India geography & polity',      freq:'6/9', pri:'MED'},
+];
+
+const RESOURCES = [
+  {icon:'📗', sec:'Business + Economics', name:'NCERT Class 12 — All 3 books', desc:'Direct source for 40+ marks of questions. Read: BS Ch 2,5,9,11,12 | Accounts Part 1 Ch 1,4,5 | Macro Ch 2–5', btn:'Open NCERT', url:'https://ncert.nic.in/textbook.php', color:'green'},
+  {icon:'▶️', sec:'Business (Video)', name:'Rajat Arora Business Studies Playlist', desc:'Best YouTube playlist for Class 12 BS. Clear, concise, Hindi. Covers Fayol, Marketing, Finance perfectly', btn:'Watch Playlist', url:'https://www.youtube.com/playlist?list=PLvMJoS0CxPEmcZvf7opMxlNCr8s9pHMs', color:''},
+  {icon:'▶️', sec:'Economics (Video)', name:'Rajat Arora Macro Economics Playlist', desc:'GDP, money, banking, BOP — all in short videos. Use 1.5× speed. Match topics to NCERT chapters', btn:'Watch Playlist', url:'https://www.youtube.com/playlist?list=PLvkJoS0CxPEmZ94hi64W_JGYMV7anTZS', color:''},
+  {icon:'🧠', sec:'Reasoning (VULNERABLE)', name:'IndiaBix — Logical Reasoning', desc:'Your weak area. Do 20 Qs daily. Start: Number Series → Blood Relations → Directions → Coding-Decoding. Timed practice', btn:'Practice Now', url:'https://www.indiabix.com/logical-reasoning/questions-and-answers/', color:'yellow'},
+  {icon:'📐', sec:'Quant/Stats (VULNERABLE)', name:'Khan Academy — Statistics & Probability', desc:'Free. Best for Mean/Median/Mode/Correlation. Watch 1 video + do exercises same day. Takes only 45 min total', btn:'Open Khan Academy', url:'https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data', color:'yellow'},
+  {icon:'📝', sec:'English (VULNERABLE)', name:'WordPandit — RC + Vocabulary', desc:'RC passages + Synonym/Antonym lists. Do 1 RC passage and 10 vocab words daily. Your biggest quick-win area', btn:'Start Practicing', url:'https://wordpandit.com/', color:'yellow'},
+  {icon:'📖', sec:'English (VULNERABLE)', name:'EnglishGrammar101.com', desc:'Tenses, prepositions, subject-verb agreement. Work through the Unit exercises. 30 min covers all grammar topics', btn:'Study Grammar', url:'https://www.englishgrammar101.com/', color:'yellow'},
+  {icon:'💻', sec:'Computer (NEW topics)', name:'GKToday Computer Awareness', desc:'Covers all hardware, software, networking basics needed. Read: Memory, Networks, Topologies, Protocols. 2 hours max', btn:'Read PDF', url:'https://www.gktoday.in/computer-awareness/', color:'purple'},
+  {icon:'🌐', sec:'General Awareness (VULNERABLE)', name:'GKToday Monthly Current Affairs', desc:'Download Nov 2025–Apr 2026 monthly PDFs. Focus: India economy, govt schemes, sports, WHO/constitutional facts', btn:'Download PDFs', url:'https://www.gktoday.in/current-affairs/', color:'orange'},
+  {icon:'📋', sec:'Practice (All sections)', name:'IndiaBix Aptitude', desc:'Percentage, Profit/Loss, Ratio practice. Skip: Time & Work, Trains, SI — NOT in recent papers. Focus on Ratio + Profit only', btn:'Practice Quant', url:'https://www.indiabix.com/aptitude/questions-and-answers/', color:''},
+];
+
+// ── STORAGE ───────────────────────────────────────────────
+function save(k,v){ try{localStorage.setItem('b04_'+k,JSON.stringify(v));}catch(e){} }
+function load(k,d){ try{return JSON.parse(localStorage.getItem('b04_'+k))??d;}catch(e){return d;} }
+
+// ── RENDER PLAN ───────────────────────────────────────────
+function renderPlan(){
+  const done = load('plan_done', {});
+  const body = document.getElementById('planBody');
+  const today = load('today_day', 2); // Day 2 = Marketing = TODAY
+  let doneCnt = 0;
+  body.innerHTML = '';
+  PLAN.forEach((p,i)=>{
+    const day = i+1;
+    const isDone = done[day];
+    if(isDone) doneCnt++;
+    const isToday = (day === today);
+    const tr = document.createElement('tr');
+    if(isDone) tr.classList.add('done-row');
+    if(isToday) tr.classList.add('today-row');
+    tr.innerHTML = `
+      <td class="day-num">${String(day).padStart(2,'0')}${isToday?'<br><span style="color:var(--accent);font-size:9px">TODAY</span>':''}</td>
+      <td><span class="section-tag ${p.tag}">${p.sec}</span>${p.note?`<br><span style="font-size:10px;color:var(--accent2)">${p.note}</span>`:''}</td>
+      <td class="topic-cell">${p.topics}</td>
+      <td><a class="resource-link" href="${p.url}" target="_blank">${p.resource}</a></td>
+      <td>
+        <button class="check-btn ${isDone?'checked':''}" onclick="toggleDay(${day})" title="Mark done">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </td>`;
+    body.appendChild(tr);
   });
-  var overallAcc = (totalAttempted > 0) ? ((totalCorrect / totalAttempted)*100).toFixed(1) : 0;
-  document.getElementById('logStats').innerHTML = '<p>Total Attempted: ' + totalAttempted + ' | Accuracy: ' + overallAcc + '%</p>';
-  // Update progress bar
-  document.getElementById('overallProgress').style.width = overallAcc + '%';
-  document.getElementById('overallProgress').textContent = overallAcc + '% overall accuracy';
+  document.getElementById('planPct').textContent = `${doneCnt} / 21 days done`;
+  document.getElementById('planBar').style.width = (doneCnt/21*100)+'%';
 }
 
-function addLogEntry() {
-  var date = document.getElementById('logDate').value;
-  var hours = document.getElementById('logHours').value;
-  var attempted = parseInt(document.getElementById('logAttempted').value);
-  var correct = parseInt(document.getElementById('logCorrect').value);
-  var wrong = parseInt(document.getElementById('logWrong').value);
-  if (!date || isNaN(attempted) || isNaN(correct) || isNaN(wrong)) return;
-  var log = loadData('progressLog') || [];
-  log.push({date: date, hours: hours, attempted: attempted, correct: correct, wrong: wrong});
-  saveData('progressLog', log);
-  renderProgressLog(log);
-  document.getElementById('logDate').value = '';
-  document.getElementById('logHours').value = '';
-  document.getElementById('logAttempted').value = '';
-  document.getElementById('logCorrect').value = '';
-  document.getElementById('logWrong').value = '';
+function toggleDay(day){
+  const done = load('plan_done',{});
+  done[day] = !done[day];
+  save('plan_done', done);
+  renderPlan();
 }
 
-function clearLog() {
-  if (confirm('Delete all progress logs?')) {
-    localStorage.removeItem('progressLog');
-    renderProgressLog([]);
-    document.getElementById('overallProgress').style.width = '0%';
-    document.getElementById('overallProgress').textContent = '0%';
+// ── RENDER TOPICS ─────────────────────────────────────────
+function renderTopics(){
+  const ratings = load('topic_ratings',{});
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = '';
+  TOPICS.forEach((t,i)=>{
+    const rating = ratings[i]||0;
+    const priClass = {HIGH:'pri-high',MED:'pri-med',VULN:'pri-vuln',NEW:'pri-new'}[t.pri]||'pri-med';
+    const div = document.createElement('div');
+    div.className='topic-row';
+    div.innerHTML = `
+      <span class="section-tag tag-${t.sec.toLowerCase().replace('/','').replace(' ','').substring(0,3)}" style="min-width:70px;text-align:center">${t.sec}</span>
+      <span class="topic-name">${t.topic}</span>
+      <span class="topic-freq">${t.freq}</span>
+      <span class="pri-badge ${priClass}">${t.pri}</span>
+      <div class="star-row">${[1,2,3,4,5].map(n=>`<button class="star ${n<=rating?'lit':''}" onclick="rateTopic(${i},${n})">★</button>`).join('')}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+function rateTopic(i,n){
+  const r=load('topic_ratings',{});
+  r[i]= (r[i]===n)?0:n;
+  save('topic_ratings',r);
+  renderTopics();
+}
+
+// ── RENDER RESOURCES ─────────────────────────────────────
+function renderResources(){
+  const g=document.getElementById('resGrid');
+  g.innerHTML='';
+  RESOURCES.forEach(r=>{
+    const d=document.createElement('div');
+    d.className='res-card';
+    d.innerHTML=`
+      <div class="res-icon">${r.icon}</div>
+      <div class="res-body">
+        <div class="res-name">${r.name}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${r.sec}</div>
+        <div class="res-desc">${r.desc}</div>
+      </div>
+      <div class="res-action"><a class="res-btn ${r.color}" href="${r.url}" target="_blank">${r.btn}</a></div>`;
+    g.appendChild(d);
+  });
+}
+
+// ── LOG ───────────────────────────────────────────────────
+function addLog(){
+  const date=document.getElementById('logDate').value;
+  const hours=parseFloat(document.getElementById('logHours').value)||0;
+  const att=parseInt(document.getElementById('logAttempted').value)||0;
+  const cor=parseInt(document.getElementById('logCorrect').value)||0;
+  const wrg=parseInt(document.getElementById('logWrong').value)||0;
+  const sec=document.getElementById('logSection').value;
+  if(!date||att===0) return;
+  const log=load('log',[]);
+  log.unshift({date,hours,att,cor,wrg,sec});
+  save('log',log);
+  renderLog();
+  ['logDate','logHours','logAttempted','logCorrect','logWrong'].forEach(id=>document.getElementById(id).value='');
+}
+
+function renderLog(){
+  const log=load('log',[]);
+  const body=document.getElementById('logBody');
+  body.innerHTML='';
+  let totAtt=0,totCor=0,totWrg=0;
+  log.forEach(e=>{
+    const score=(e.cor-(e.wrg*0.25)).toFixed(2);
+    const acc=e.att>0?((e.cor/e.att)*100).toFixed(1)+'%':'—';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${e.date}</td><td>${e.sec}</td><td>${e.hours}</td><td>${e.att}</td><td>${e.cor}</td><td>${e.wrg}</td><td style="font-family:var(--mono);font-weight:700">${score}</td><td>${acc}</td>`;
+    body.appendChild(tr);
+    totAtt+=e.att; totCor+=e.cor; totWrg+=e.wrg;
+  });
+  if(log.length>0){
+    const overallAcc=((totCor/totAtt)*100).toFixed(1);
+    document.getElementById('accPct').textContent=overallAcc+'% accuracy';
+    document.getElementById('accBar').style.width=overallAcc+'%';
+    const projScore=(totCor-(totWrg*0.25)).toFixed(1);
+    const sc=document.getElementById('liveScore');
+    sc.style.display='block';
+    const sv=document.getElementById('scoreVal');
+    sv.textContent=projScore+' / '+totAtt;
+    sv.className='score-big '+(projScore>=70?'good':projScore>=60?'mid':'bad');
+    document.getElementById('scoreMsg').textContent=projScore>=70?'🎯 On track for your 70 target! Keep going.':projScore>=60?'⚡ Close — push accuracy in weak areas.':'⚠ Below target — focus on confident questions only, skip guesses.';
   }
 }
+
+function clearLog(){
+  if(confirm('Delete all log entries?')){save('log',[]); renderLog();}
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+window.onload=function(){
+  const dl=load('days',21);
+  document.getElementById('daysLeft').value=dl;
+  document.getElementById('daysLeft').oninput=function(){save('days',this.value);};
+  renderPlan(); renderTopics(); renderResources(); renderLog();
+};
 </script>
 </body>
 </html>
