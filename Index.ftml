@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JMI B04 Prep Tracker 2026</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+  .tab { overflow: hidden; background: #333; border-radius: 10px 10px 0 0; }
+  .tab button { background: #333; color: white; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
+  .tab button:hover { background: #555; }
+  .tab button.active { background: #4CAF50; }
+  .tabcontent { display: none; background: white; padding: 20px; border: 1px solid #ccc; border-top: none; border-radius: 0 0 10px 10px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background-color: #4CAF50; color: white; }
+  input[type="text"], input[type="number"], select { padding: 6px; width: 90%; box-sizing: border-box; }
+  .btn { background: #4CAF50; color: white; padding: 8px 16px; border: none; cursor: pointer; margin-top: 10px; border-radius: 5px; }
+  .btn:hover { background: #45a049; }
+  .danger { background: #f44336; }
+  .danger:hover { background: #d32f2f; }
+  .progress-wrap { background: #eee; border-radius: 20px; margin: 10px 0; }
+  .progress-bar { height: 20px; border-radius: 20px; background: #4CAF50; text-align: center; color: white; line-height: 20px; }
+</style>
+<script>
+// Tab functionality
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Load/save data using localStorage
+function saveData(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function loadData(key) {
+  return JSON.parse(localStorage.getItem(key));
+}
+
+// Initialize checkboxes, dropdowns etc. from saved state
+window.onload = function() {
+  // open first tab by default
+  document.getElementById("Dashboard").style.display = "block";
+  document.getElementsByClassName("tablinks")[0].className += " active";
+
+  // load plan checkboxes
+  var planState = loadData("planState") || {};
+  document.querySelectorAll('#planTable input[type="checkbox"]').forEach(function(cb) {
+    cb.checked = planState[cb.id] || false;
+    cb.addEventListener('change', function() {
+      planState[cb.id] = cb.checked;
+      saveData("planState", planState);
+    });
+  });
+
+  // load topic ratings
+  var topicRatings = loadData("topicRatings") || {};
+  document.querySelectorAll('#topicTable select').forEach(function(sel) {
+    sel.value = topicRatings[sel.id] || "1";
+    sel.addEventListener('change', function() {
+      topicRatings[sel.id] = sel.value;
+      saveData("topicRatings", topicRatings);
+    });
+  });
+
+  // load progress log
+  var progressLog = loadData("progressLog") || [];
+  renderProgressLog(progressLog);
+
+  // days left calculator (replace with actual exam date)
+  document.getElementById('daysLeft').innerText = '21 (manual)';
+}
+</script>
+</head>
+<body>
+<h1>🎯 JMI B04 Entrance Prep Tracker 2026</h1>
+<div class="tab">
+  <button class="tablinks active" onclick="openTab(event, 'Dashboard')">📊 Dashboard</button>
+  <button class="tablinks" onclick="openTab(event, 'Plan')">📅 21-Day Plan</button>
+  <button class="tablinks" onclick="openTab(event, 'Topics')">🧠 Topic Mastery</button>
+  <button class="tablinks" onclick="openTab(event, 'Resources')">🔗 Resources</button>
+  <button class="tablinks" onclick="openTab(event, 'Progress')">📈 Progress Log</button>
+</div>
+
+<!-- Dashboard Tab -->
+<div id="Dashboard" class="tabcontent">
+  <h3>Section Weights (Official Syllabus 2026-27)</h3>
+  <table>
+    <tr><th>Section</th><th>Marks</th><th>Questions</th></tr>
+    <tr><td>Business & Economic Awareness</td><td>30</td><td>30</td></tr>
+    <tr><td>Reasoning & Quantitative Aptitude</td><td>25</td><td>25</td></tr>
+    <tr><td>General English</td><td>25</td><td>25</td></tr>
+    <tr><td>General Awareness</td><td>20</td><td>20</td></tr>
+  </table>
+  <p><b>Target Score:</b> 60-75 / 100</p>
+  <p><b>Days Left:</b> <span id="daysLeft">21</span> (adjust as per exam date)</p>
+  <div class="progress-wrap">
+    <div class="progress-bar" style="width:0%;" id="overallProgress">0%</div>
+  </div>
+  <p style="background:#fff3cd; padding:10px; border-radius:5px;">⚠️ Negative marking: -0.25 per wrong answer. Attempt only if ≥60% confident. Skip unsure ones.</p>
+</div>
+
+<!-- 21-Day Plan Tab -->
+<div id="Plan" class="tabcontent">
+  <h3>21-Day Study Plan (Mixed Subjects)</h3>
+  <table id="planTable">
+    <tr><th>Day</th><th>Section Focus</th><th>Topics to Cover</th><th>Resource</th><th>Done</th></tr>
+    <tr><td>1</td><td>Business</td><td>Fayol 14 principles; POSDC</td><td>NCERT Ch 2; Rajat Arora playlist</td><td><input type="checkbox" id="d1"></td></tr>
+    <tr><td>2</td><td>Business</td><td>Taylor's Scientific Mgmt; Coordination</td><td>NCERT Ch 2 + Rajat Arora</td><td><input type="checkbox" id="d2"></td></tr>
+    <tr><td>3</td><td>Business</td><td>Staffing, Directing, Leadership, Grapevine</td><td>NCERT Ch 6-7</td><td><input type="checkbox" id="d3"></td></tr>
+    <tr><td>4</td><td>Business</td><td>Marketing (4Ps, Branding, Consumer Protection)</td><td>NCERT Ch 11-12</td><td><input type="checkbox" id="d4"></td></tr>
+    <tr><td>5</td><td>Economics</td><td>GDP, GNP, NNP, National Income concepts</td><td>NCERT Macro Ch 2</td><td><input type="checkbox" id="d5"></td></tr>
+    <tr><td>6</td><td>Economics</td><td>Money & Banking (RBI tools, CRR, SLR)</td><td>NCERT Macro Ch 3</td><td><input type="checkbox" id="d6"></td></tr>
+    <tr><td>7</td><td>Economics</td><td>Inflation, Unemployment, Stagflation, 1991 reforms</td><td>NCERT Macro Ch 4-5</td><td><input type="checkbox" id="d7"></td></tr>
+    <tr><td>8</td><td>Accounts</td><td>Partnership basics, profit-sharing, goodwill</td><td>NCERT Accounts Part 1 Ch 1-2</td><td><input type="checkbox" id="d8"></td></tr>
+    <tr><td>9</td><td>Accounts</td><td>Financial Ratios, Cash Flow Statement</td><td>NCERT Accounts Part 2 Ch 3-4</td><td><input type="checkbox" id="d9"></td></tr>
+    <tr><td>10</td><td>Accounts</td><td>Share capital, Forfeiture, Primary/Secondary markets</td><td>NCERT Accounts + Ch 10</td><td><input type="checkbox" id="d10"></td></tr>
+    <tr><td>11</td><td>Reasoning</td><td>Number Series (30 Qs)</td><td>IndiaBix.com</td><td><input type="checkbox" id="d11"></td></tr>
+    <tr><td>12</td><td>Reasoning</td><td>Blood Relations, Directions (30 Qs each)</td><td>IndiaBix</td><td><input type="checkbox" id="d12"></td></tr>
+    <tr><td>13</td><td>Reasoning</td><td>Coding-Decoding, Seating, Analogies (30 Qs)</td><td>IndiaBix + Testbook</td><td><input type="checkbox" id="d13"></td></tr>
+    <tr><td>14</td><td>Quant</td><td>Percentages, Profit/Loss, Ratio, Average</td><td>IndiaBix + Career Ride</td><td><input type="checkbox" id="d14"></td></tr>
+    <tr><td>15</td><td>Quant</td><td>Time & Work, Distance, Trains, Simple Interest, Probability</td><td>IndiaBix + Career Ride</td><td><input type="checkbox" id="d15"></td></tr>
+    <tr><td>16</td><td>Quant/Stats</td><td>Mean, Median, Mode, Correlation, Frequency dist.</td><td>NCERT Class 11 Stats Ch 15-16</td><td><input type="checkbox" id="d16"></td></tr>
+    <tr><td>17</td><td>English</td><td>Tenses, Prepositions, Subject-verb agreement (30 Qs)</td><td>EnglishGrammar101.com</td><td><input type="checkbox" id="d17"></td></tr>
+    <tr><td>18</td><td>English</td><td>Synonyms, Antonyms, Error detection, RC strategy</td><td>WordPandit.com</td><td><input type="checkbox" id="d18"></td></tr>
+    <tr><td>19</td><td>Computer</td><td>Hardware, Software, Networks, Protocols</td><td>GKToday Computer PDF</td><td><input type="checkbox" id="d19"></td></tr>
+    <tr><td>20</td><td>GA</td><td>Current affairs Sep 2025 - Feb 2026</td><td>GKToday Monthly PDF</td><td><input type="checkbox" id="d20"></td></tr>
+    <tr><td>21</td><td>REVISION</td><td>Full mock (2025 PYQ), review mistakes</td><td>Your PYQ files</td><td><input type="checkbox" id="d21"></td></tr>
+  </table>
+</div>
+
+<!-- Topic Mastery Tab -->
+<div id="Topics" class="tabcontent">
+  <h3>Topic Mastery Tracker (Rate yourself 1-5)</h3>
+  <table id="topicTable">
+    <tr><th>Section</th><th>Topic</th><th>Repeat Freq (9yr)</th><th>Priority</th><th>My Rating</th></tr>
+    <tr><td>Business</td><td>Fayol 14 principles</td><td>9</td><td>HIGH</td><td><select id="t1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>POSDC of management</td><td>9</td><td>HIGH</td><td><select id="t2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Taylor scientific management</td><td>8</td><td>MED</td><td><select id="t3"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Staffing – recruitment & training</td><td>8</td><td>MED</td><td><select id="t4"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Marketing 4Ps + Branding</td><td>9</td><td>HIGH</td><td><select id="t5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Consumer Protection Act 2019</td><td>8</td><td>MED</td><td><select id="t6"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Financial markets (SEBI)</td><td>8</td><td>MED</td><td><select id="t7"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Business</td><td>Working capital & financial planning</td><td>7</td><td>MED</td><td><select id="t8"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Accounts</td><td>Partnership profit-sharing ratio</td><td>9</td><td>HIGH</td><td><select id="t9"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Accounts</td><td>Goodwill valuation</td><td>8</td><td>MED</td><td><select id="t10"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Accounts</td><td>Cash flow statement</td><td>8</td><td>MED</td><td><select id="t11"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Accounts</td><td>Financial ratios</td><td>8</td><td>MED</td><td><select id="t12"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Accounts</td><td>Share capital & forfeiture</td><td>7</td><td>MED</td><td><select id="t13"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Economics</td><td>GDP, GNP, National Income</td><td>9</td><td>HIGH</td><td><select id="t14"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Economics</td><td>RBI monetary tools</td><td>8</td><td>MED</td><td><select id="t15"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Economics</td><td>Inflation & stagflation</td><td>8</td><td>MED</td><td><select id="t16"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Economics</td><td>Unemployment types</td><td>7</td><td>MED</td><td><select id="t17"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Economics</td><td>1991 reforms & MGNREGA</td><td>7</td><td>MED</td><td><select id="t18"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Reasoning</td><td>Number series</td><td>9</td><td>HIGH</td><td><select id="t19"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Reasoning</td><td>Blood relations</td><td>9</td><td>HIGH</td><td><select id="t20"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Reasoning</td><td>Directions & distance</td><td>9</td><td>HIGH</td><td><select id="t21"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Reasoning</td><td>Coding-decoding</td><td>8</td><td>MED</td><td><select id="t22"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Reasoning</td><td>Seating/ranking order</td><td>7</td><td>MED</td><td><select id="t23"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Quant/Stats</td><td>Mean, Median, Mode</td><td>7</td><td>MED</td><td><select id="t24"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Quant/Stats</td><td>Correlation (Pearson r)</td><td>5</td><td>NEW</td><td><select id="t25"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Quant/Stats</td><td>Frequency distribution & class width</td><td>6</td><td>NEW</td><td><select id="t26"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Aptitude</td><td>Percentages, Profit/Loss, Ratio</td><td>9</td><td>HIGH</td><td><select id="t27"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Aptitude</td><td>Time & Work, Distance, Trains</td><td>9</td><td>HIGH</td><td><select id="t28"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Aptitude</td><td>Simple Interest, Probability</td><td>7</td><td>MED</td><td><select id="t29"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Computer</td><td>Hardware basics</td><td>NEW</td><td>NEW</td><td><select id="t30"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Computer</td><td>Software types</td><td>NEW</td><td>NEW</td><td><select id="t31"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Computer</td><td>Networks (LAN, WAN, topologies)</td><td>NEW</td><td>NEW</td><td><select id="t32"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>Computer</td><td>Protocols (DNS, HTTP, SSL)</td><td>NEW</td><td>NEW</td><td><select id="t33"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>English</td><td>Reading comprehension</td><td>7</td><td>MED</td><td><select id="t34"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>English</td><td>Tenses & grammar</td><td>7</td><td>MED</td><td><select id="t35"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>English</td><td>Synonyms & antonyms</td><td>7</td><td>MED</td><td><select id="t36"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>English</td><td>Sentence correction & prepositions</td><td>6</td><td>NEW</td><td><select id="t37"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td>GA</td><td>Current affairs (6 months)</td><td>7</td><td>MED</td><td><select id="t38"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+  </table>
+</div>
+
+<!-- Resources Tab -->
+<div id="Resources" class="tabcontent">
+  <h3>Free Resources with Direct Links</h3>
+  <table>
+    <tr><th>Section</th><th>Resource</th><th>Link</th><th>What to Study</th></tr>
+    <tr><td>Business</td><td>Rajat Arora Business Studies</td><td><a href="https://www.youtube.com/playlist?list=PLvMJoS0CxPEmcZvf7opMxlNCr8s9pHMs" target="_blank">YouTube Playlist</a></td><td>Fayol, POSDC, Marketing</td></tr>
+    <tr><td>Business</td><td>NCERT Class 12 Business Studies</td><td><a href="https://ncert.nic.in/textbook.php/bess1=1-12" target="_blank">NCERT PDF</a></td><td>Ch 1-2, 6-7, 10-12</td></tr>
+    <tr><td>Accounts</td><td>Rajat Arora Accounts</td><td><a href="https://www.youtube.com/playlist?list=PLvkJoS0CxPEmeAw-ojNRNCTM8eMeSRu" target="_blank">YouTube Playlist</a></td><td>Partnership, Cash Flow, Ratios</td></tr>
+    <tr><td>Accounts</td><td>NCERT Class 12 Accountancy</td><td><a href="https://ncert.nic.in/textbook.php/aece210-1-12" target="_blank">NCERT PDF</a></td><td>Part 1 Ch 1-4</td></tr>
+    <tr><td>Economics</td><td>NCERT Class 12 Macro Economics</td><td><a href="https://ncert.nic.in/textbook.php/leme201-1-12" target="_blank">NCERT PDF</a></td><td>Ch 2-5</td></tr>
+    <tr><td>Economics</td><td>Rajat Arora Macro</td><td><a href="https://www.youtube.com/playlist?list=PLvkJoS0CxPEmZ94hi64W_JGYMV7anTZS" target="_blank">YouTube Playlist</a></td><td>Inflation, Money, Growth</td></tr>
+    <tr><td>Reasoning</td><td>IndiaBix Logical Reasoning</td><td><a href="https://www.indiabix.com/logical-reasoning/questions-and-answers/" target="_blank">IndiaBix.com</a></td><td>Number series, Blood, Directions</td></tr>
+    <tr><td>Quant</td><td>IndiaBix Aptitude</td><td><a href="https://www.indiabix.com/aptitude/questions-and-answers/" target="_blank">IndiaBix.com</a></td><td>Percentage, Profit, Time, SI</td></tr>
+    <tr><td>Stats</td><td>NCERT Class 11 Statistics</td><td><a href="https://ncert.nic.in/textbook.php/kest101-1-12" target="_blank">NCERT PDF</a></td><td>Ch 15-16</td></tr>
+    <tr><td>English</td><td>WordPandit Vocabulary</td><td><a href="https://wordpandit.com/" target="_blank">WordPandit.com</a></td><td>Synonyms/Antonyms daily</td></tr>
+    <tr><td>English</td><td>EnglishGrammar101</td><td><a href="https://www.englishgrammar101.com/" target="_blank">Grammar101.com</a></td><td>Tenses, Prepositions</td></tr>
+    <tr><td>GA</td><td>GKToday Current Affairs PDF</td><td><a href="https://www.gktoday.in/current-affairs/" target="_blank">GKToday.in</a></td><td>Monthly PDF free</td></tr>
+    <tr><td>Computer</td><td>GKToday Computer Awareness</td><td><a href="https://www.gktoday.in/computer-awareness/" target="_blank">GKToday.in</a></td><td>All in one PDF</td></tr>
+    <tr><td>Practice</td><td>Your PYQ files (local)</td><td>N/A (Your drive)</td><td>Full mocks</td></tr>
+  </table>
+</div>
+
+<!-- Progress Log Tab -->
+<div id="Progress" class="tabcontent">
+  <h3>Daily Progress Log</h3>
+  <p>Record each study session. Data saved in your browser.</p>
+  <form onsubmit="addLogEntry(); return false;">
+    <label>Date: <input type="date" id="logDate" required></label><br><br>
+    <label>Hours Studied: <input type="number" id="logHours" min="0" step="0.5" required></label><br><br>
+    <label>Questions Attempted: <input type="number" id="logAttempted" min="0" required></label><br><br>
+    <label>Correct: <input type="number" id="logCorrect" min="0" required></label><br><br>
+    <label>Wrong: <input type="number" id="logWrong" min="0" required></label><br><br>
+    <button class="btn">Add Entry</button>
+  </form>
+  <button class="btn danger" onclick="clearLog()">Clear All Logs</button>
+  <h4>Log History</h4>
+  <table id="logTable">
+    <tr><th>Date</th><th>Hours</th><th>Attempted</th><th>Correct</th><th>Wrong</th><th>Accuracy</th></tr>
+  </table>
+  <div id="logStats"></div>
+</div>
+
+<script>
+// Progress log functions
+function renderProgressLog(log) {
+  var tableBody = document.querySelector('#logTable tbody');
+  if (!tableBody) {
+    tableBody = document.createElement('tbody');
+    document.getElementById('logTable').appendChild(tableBody);
+  }
+  tableBody.innerHTML = '';
+  var totalCorrect = 0, totalWrong = 0, totalAttempted = 0;
+  log.forEach(function(entry) {
+    var row = tableBody.insertRow();
+    row.insertCell().textContent = entry.date;
+    row.insertCell().textContent = entry.hours;
+    row.insertCell().textContent = entry.attempted;
+    row.insertCell().textContent = entry.correct;
+    row.insertCell().textContent = entry.wrong;
+    var acc = (entry.attempted > 0) ? ((entry.correct / entry.attempted)*100).toFixed(1) + '%' : 'N/A';
+    row.insertCell().textContent = acc;
+    totalCorrect += entry.correct;
+    totalWrong += entry.wrong;
+    totalAttempted += entry.attempted;
+  });
+  var overallAcc = (totalAttempted > 0) ? ((totalCorrect / totalAttempted)*100).toFixed(1) : 0;
+  document.getElementById('logStats').innerHTML = '<p>Total Attempted: ' + totalAttempted + ' | Accuracy: ' + overallAcc + '%</p>';
+  // Update progress bar
+  document.getElementById('overallProgress').style.width = overallAcc + '%';
+  document.getElementById('overallProgress').textContent = overallAcc + '% overall accuracy';
+}
+
+function addLogEntry() {
+  var date = document.getElementById('logDate').value;
+  var hours = document.getElementById('logHours').value;
+  var attempted = parseInt(document.getElementById('logAttempted').value);
+  var correct = parseInt(document.getElementById('logCorrect').value);
+  var wrong = parseInt(document.getElementById('logWrong').value);
+  if (!date || isNaN(attempted) || isNaN(correct) || isNaN(wrong)) return;
+  var log = loadData('progressLog') || [];
+  log.push({date: date, hours: hours, attempted: attempted, correct: correct, wrong: wrong});
+  saveData('progressLog', log);
+  renderProgressLog(log);
+  document.getElementById('logDate').value = '';
+  document.getElementById('logHours').value = '';
+  document.getElementById('logAttempted').value = '';
+  document.getElementById('logCorrect').value = '';
+  document.getElementById('logWrong').value = '';
+}
+
+function clearLog() {
+  if (confirm('Delete all progress logs?')) {
+    localStorage.removeItem('progressLog');
+    renderProgressLog([]);
+    document.getElementById('overallProgress').style.width = '0%';
+    document.getElementById('overallProgress').textContent = '0%';
+  }
+}
+</script>
+</body>
+</html>
